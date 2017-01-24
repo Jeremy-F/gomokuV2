@@ -3,7 +3,7 @@
 .gitignore
 .gradle/
 .idea/
-build.gradle
 gradle/
 gradlew
 gradlew.bat
+build/
