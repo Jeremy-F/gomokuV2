@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.DS_Store
+.gitignore
+.gradle/
+.idea/
+build.gradle
+gradle/
+gradlew
+gradlew.bat
