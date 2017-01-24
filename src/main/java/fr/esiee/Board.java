@@ -163,8 +163,8 @@ public class Board {
      * @param dColumn
      * @return
      */
-    public ArrayList<Box> genericScan(int line, int column, int dLine, int dColumn){
-        ArrayList<Box> alignment = new ArrayList<Box>();
+    public Alignment genericScan(int line, int column, int dLine, int dColumn){
+        Alignment alignment = new Alignment();
         int size = this.getBoxes().size();
         for (int currentLine = line, currentColumn = column;
                 currentLine >= 0 && currentLine < size && currentColumn < size && currentColumn >= 0;
@@ -178,7 +178,7 @@ public class Board {
      * @param lineNumber The number of the line needed
      * @return An ArrayList with all the {@link Box} on the line
      */
-    public ArrayList<Box> getBoxLine(int lineNumber){
+    public Alignment getBoxLine(int lineNumber){
         return genericScan(lineNumber, 0, 0, 1);
     }
 
@@ -187,7 +187,7 @@ public class Board {
      * @param columnNumber The number of the column needed
      * @return An ArrayList with all the {@link Box} on the column
      */
-    public ArrayList<Box> getBoxColumn(int columnNumber){
+    public Alignment getBoxColumn(int columnNumber){
         return genericScan(0, columnNumber, 1, 0);
     }
 
@@ -197,7 +197,7 @@ public class Board {
      * @param column The line column of the first box
      * @return The Diagonal {@link ArrayList<Box>}
      */
-    public ArrayList<Box> getDiagonalNwToSe(int line, int column){
+    public Alignment getDiagonalNwToSe(int line, int column){
         return genericScan(line,column, 1, 1);
     }
     /**
@@ -206,7 +206,7 @@ public class Board {
      * @param column The line column of the first box
      * @return The Diagonal {@link ArrayList<Box>}
      */
-    public ArrayList<Box> getDiagonalSwToNe(int line, int column){
+    public Alignment getDiagonalSwToNe(int line, int column){
         return genericScan(line,column, -1, 1);
     }
 
@@ -214,9 +214,9 @@ public class Board {
      * Give all the possible alignement
      * @return A list containing all the alignment
      */
-    public ArrayList<ArrayList<Box>> getAllAlignment(){
+    public ArrayList<Alignment> getAllAlignment(){
         // Creating the Output Table
-        ArrayList<ArrayList<Box>> allAlignment = new ArrayList<>();
+        ArrayList<Alignment> allAlignment = new ArrayList<>();
         int size = this.getBoxes().size();
 
         //Add line and columns
