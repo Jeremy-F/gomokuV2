@@ -4,9 +4,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  *****************************************************
@@ -30,16 +28,14 @@ public class Board {
 	private Game game;
 	private Player currentPlayer;
 	private GridPane gridPane;
-	private int nbBoxesAligned;
-
-
+	private int winningNumber;
 
     /**
      * Constructor allowing to create a board without {@link Game}
      * @param size The size of the board size * size
      */
-    private Board(int size, int nbBoxesAligned) {
-        this.nbBoxesAligned = nbBoxesAligned;
+    private Board(int size, int winningNumber) {
+        this.winningNumber = winningNumber;
         this.boxes = new ArrayList<>();
         this.players = new ArrayList<>();
 
@@ -79,8 +75,8 @@ public class Board {
      * @param size The size of the board size * size
      * @param game The Game
      */
-    public Board(int size, int nbBoxesAligned, Game game) {
-        this(size, nbBoxesAligned);
+    public Board(int size, int winningNumber, Game game) {
+        this(size, winningNumber);
         this.game = game;
     }
 
@@ -164,7 +160,7 @@ public class Board {
      * @return
      */
     public Alignment genericScan(int line, int column, int dLine, int dColumn){
-        Alignment alignment = new Alignment();
+        Alignment alignment = new Alignment(this.winningNumber);
         int size = this.getBoxes().size();
         for (int currentLine = line, currentColumn = column;
                 currentLine >= 0 && currentLine < size && currentColumn < size && currentColumn >= 0;
@@ -226,7 +222,7 @@ public class Board {
             // Add Line
             allAlignment.add(this.getBoxLine(i));
         }
-        //Add all diagon
+        //Add all diagonal
         for(int line = 0 ; line < size; line++){
             for(int column = 0; column < size; column++){
                 //We need only the top, left and bottom lines.
@@ -237,7 +233,7 @@ public class Board {
             }
         }
         // We remove all the Alignment below the minimum size
-        allAlignment.removeIf(alignment -> alignment.size() < this.nbBoxesAligned);
+        allAlignment.removeIf(alignment -> alignment.size() < this.winningNumber);
         // We return the output table
         return allAlignment;
     }

@@ -52,9 +52,9 @@ public class Box {
 		return circle;//*/
 	}
 
-    public void setOwner(Player owner) {
+    public Box setOwner(Player owner) {
         this.owner.setValue(owner);
-        System.out.println("Je change mon owner");
+        return this;
     }
 
     /**

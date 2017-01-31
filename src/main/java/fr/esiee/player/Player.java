@@ -39,9 +39,24 @@ public abstract class Player {
 	@Override
 	public String toString() {
 		return "Player{" +
-				"name='" + name.toString() + '\'' +
-				", color=" + color.toString() +
-				", board=" + board.toString() +
-				'}';
+				"name='" + name.toString() + '}';
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Player player = (Player) o;
+
+        return (name != null ? name.equals(player.name) : player.name == null) && (color != null ? color.equals(player.color) : player.color == null) && (board != null ? board.equals(player.board) : player.board == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (board != null ? board.hashCode() : 0);
+        return result;
+    }
 }
