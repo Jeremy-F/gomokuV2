@@ -16,6 +16,9 @@ public abstract class Player {
 	private String name;
 	private Color color;
 
+	private static int MAX_POINT = 1000;
+	private static int MIN_POINT = -1000;
+	private static int AVERAGE_POINT = 0;
 
 	public Player(String name, Color color) {
 		this.name = name;
@@ -55,4 +58,25 @@ public abstract class Player {
     public boolean wonByOtherPlayerOn(Board board) {
         return board.isFinished() && !this.haveWinOn(board) && board.whoWon() != null;
     }
+
+	public int evaluate(Board board) {
+	    int points = board.getNumberOfMoves();
+
+		if (haveWinOn(board)) {
+            points =  MAX_POINT - points;
+            //todo : remove
+            System.out.println("you win");
+        }
+		else
+		    if (wonByOtherPlayerOn(board)) {
+                points = MIN_POINT + points;
+                //todo : remove
+                System.out.println("you lost");
+                }
+            else
+                return AVERAGE_POINT;
+
+		return points;
+	}
+
 }

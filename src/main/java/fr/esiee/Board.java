@@ -28,6 +28,13 @@ public class Board {
 	private GridPane gridPane;
 	private int winningNumber;
 
+
+
+    private int numberOfMoves = 0;
+    public int getNumberOfMoves() {
+        return numberOfMoves;
+    }
+
     /**
      * Constructor allowing to create a board without {@link Game}
      * @param size The size of the board size * size
@@ -353,6 +360,7 @@ public class Board {
      * @return true if the game is over, else false
      */
     public boolean isFinished(){
+
         return this.isWon() || this.getAllEmptyBox().size() == 0;
     }
 
@@ -365,18 +373,24 @@ public class Board {
     public boolean play(int line, int column) {
         if(!this.isFinished()) {
             Box box = this.getBox(line, column);
-            if (box.haveOwner()) {
+            if (box.hasOwner()) {
                 return false;
             }
             box.setOwner(this.getCurrentPlayer());
+            //To memorize the numberOfMoves
+            numberOfMoves +=1;
+            //todo : remove
+            System.out.println("State of  :" + this.currentPlayer + " : "  +this.getCurrentPlayer().evaluate(this));
+            System.out.println("Number of moves :" + getNumberOfMoves());
             this.currentPlayer = this.getNextPlayer();
 
-            // On donne l amain au prochain joueur
+            // On donne la main au prochain joueur
             this.currentPlayer.play(this);
 
             //Board.affiche(getDiagonalSE(1,2));
             return true;
-        }return false;
+        }
+        return false;
     }
     /**
      * The gridPane who represent the Board
@@ -391,7 +405,7 @@ public class Board {
         ArrayList<Box> emptyBox = new ArrayList<>();
         for(SimpleObjectProperty<Box> boxSimpleObjectProperty : this.getBoxes()){
             Box box = boxSimpleObjectProperty.get();
-            if(!box.haveOwner()){
+            if(!box.hasOwner()){
                 emptyBox.add(box);
             }
         }

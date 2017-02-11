@@ -44,7 +44,7 @@ public class Box {
      * Verify if the Box have a owner
      * @return boolean true if have owner, else false
      */
-	public boolean haveOwner(){
+	public boolean hasOwner(){
 		return this.owner.get() != null;
 	}
 
@@ -58,7 +58,7 @@ public class Box {
 
         circle.setRadius(40);
 
-        if(haveOwner()){
+        if(hasOwner()){
             circle.setStroke(Color.BLACK); // black border
             circle.setFill(this.owner.get().getColor());  // player color for the circle color
         }else{

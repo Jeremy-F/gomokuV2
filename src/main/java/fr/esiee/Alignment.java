@@ -95,12 +95,15 @@ public class Alignment {
         Player lastPlayer = this.getBox(0).getOwner();
         for(int i = 1; i < this.size(); i++){
             final Box box = this.getBox(i);
-            if(box.haveOwner()) {
+            if(box.hasOwner()) {
                 Player owner = box.getOwner();
-                if (!owner.equals(lastPlayer)) currentPlayerBoxNumber = 1;
+                if (!owner.equals(lastPlayer)) {
+                    currentPlayerBoxNumber = 1;
+                }
                 else {
                     currentPlayerBoxNumber++;
-                    if(currentPlayerBoxNumber >= this.winningNumber) return owner;
+                    if(currentPlayerBoxNumber >= this.winningNumber)
+                        return owner;
                 }
                 lastPlayer = owner;
             }

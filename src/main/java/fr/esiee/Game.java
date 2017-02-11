@@ -54,6 +54,7 @@ public class Game extends Application {
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
     /**
@@ -111,5 +112,6 @@ public class Game extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+
     }
 }
