@@ -18,10 +18,27 @@ import javafx.scene.shape.Circle;
 public class Box {
 
 	private SimpleObjectProperty<Player> owner;
+	private int line;
+	private int column;
+
 
 	public Box() {
-		this.owner = new SimpleObjectProperty<>();
+	    this(new SimpleObjectProperty<Player>(), 0, 0);
 	}
+
+    public Box(int line, int column) {
+	    this(new SimpleObjectProperty<Player>(), line, column);
+    }
+
+    private Box(SimpleObjectProperty<Player> owner, int line, int column) {
+        this.owner = owner;
+        this.line = line;
+        this.column = column;
+    }
+
+    public Box(Box box) {
+	    this(box.owner, box.getLine(), box.getColumn());
+    }
 
     /**
      * Verify if the Box have a owner
@@ -73,10 +90,20 @@ public class Box {
         return owner;
     }
 
+
+
     @Override
     public String toString() {
         return "Box{" +
                 "owner=" + getOwner() +
                 '}';
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
     }
 }

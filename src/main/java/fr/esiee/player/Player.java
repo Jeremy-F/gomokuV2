@@ -15,22 +15,18 @@ import javafx.scene.paint.Color;
 public abstract class Player {
 	private String name;
 	private Color color;
-	private Board board;
 
-	private Player(String name, Color color) {
-		this(name, color,null);
-	}
 
-	public Player(String name, Color color, Board board) {
+	public Player(String name, Color color) {
 		this.name = name;
 		this.color = color;
-		this.board = board;
 	}
 
-	public Board getBoard() {
-		return this.board;
-	}
-	abstract public boolean play();
+    public void setName(String name) {
+        this.name = name;
+    }
+
+	abstract public boolean play(Board board);
 
 	public Color getColor() {
 		return this.color;
@@ -49,14 +45,14 @@ public abstract class Player {
 
         Player player = (Player) o;
 
-        return (name != null ? name.equals(player.name) : player.name == null) && (color != null ? color.equals(player.color) : player.color == null) && (board != null ? board.equals(player.board) : player.board == null);
+        return (name != null ? name.equals(player.name) : player.name == null) && (color != null ? color.equals(player.color) : player.color == null);
     }
 
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (color != null ? color.hashCode() : 0);
-        result = 31 * result + (board != null ? board.hashCode() : 0);
-        return result;
+    public boolean haveWinOn(Board board){
+	    return board.isWonBy(this);
+    }
+
+    public boolean wonByOtherPlayerOn(Board board) {
+        return board.isFinished() && !this.haveWinOn(board) && board.whoWon() != null;
     }
 }

@@ -20,9 +20,7 @@ import java.util.ArrayList;
 public class Board {
 
 
-
-
-	private ArrayList<ArrayList<SimpleObjectProperty<Box>>> boxes;
+	private ArrayList<SimpleObjectProperty<Box>> boxes;
 	private ArrayList<Player> players;
 
 	private Game game;
@@ -45,6 +43,36 @@ public class Board {
         this.initializeBoxes(size);
         this.updateGridPane();
     }
+    public Board(Board board){
+        this(board.winningNumber, board.boxes, board.players);
+    }
+
+    public Board(int winningNumber, ArrayList<SimpleObjectProperty<Box>> boxes, ArrayList<Player> players) {
+        /*this.winningNumber = winningNumber;
+        this.boxes = new ArrayList<>();
+        this.players = new ArrayList<>();
+        for(SimpleObjectProperty<Box> boxSimpleObjectProperty : boxes){
+            this.boxes.add(new SimpleObjectProperty<>(new Box( (Box) boxSimpleObjectProperty.get())));
+        }
+        for(Player player : players){
+            try{
+                Player newPlayer = (Player) player.getClass().newInstance();
+                newPlayer.initFromWith(player, this);
+                this.players.add(newPlayer);
+            } catch (IllegalAccessException | InstantiationException e) {
+                e.printStackTrace();
+            }
+        }*/
+    }
+
+    public Board clone(){
+        try {
+            return (Board) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Update the gridpane
@@ -53,8 +81,8 @@ public class Board {
      */
     private Board updateGridPane() {
 
-        for (int line = 0; line < this.getBoxes().size(); line++) {
-            for (int column = 0; column < this.getBoxes().size(); column++) {
+        for (int line = 0; line < this.dimension(); line++) {
+            for (int column = 0; column < this.dimension(); column++) {
 
 
                 final Node boxNode = this.getBox(line, column).toNode();
@@ -86,14 +114,12 @@ public class Board {
      * @return Board Current object
      */
     private Board initializeBoxes(int size){
-        for(int i = 0; i < size; i++){
-            ArrayList<SimpleObjectProperty<Box>> boxesLine = new ArrayList<>();
-            for(int j = 0; j < size; j++){
-                SimpleObjectProperty<Box>  propertyBox= new SimpleObjectProperty<>(new Box());
+        for(int line = 0; line < size; line++){
+            for(int column = 0; column < size; column++){
+                SimpleObjectProperty<Box>  propertyBox= new SimpleObjectProperty<>(new Box(line, column));
                 propertyBox.get().ownerProperty().addListener((observable, oldValue, newValue) -> this.updateGridPane());
-                boxesLine.add(propertyBox);
+                this.boxes.add(propertyBox);
             }
-            this.boxes.add(boxesLine);
         }
         return this;
     }
@@ -118,7 +144,7 @@ public class Board {
             this.players.add(player);
         }
         this.setCurrentPlayer(this.players.get(0));
-        this.currentPlayer.play();
+        this.currentPlayer.play(this);
         return this;
     }
 
@@ -128,8 +154,14 @@ public class Board {
      * @param column of the box (j)
      * @return A SimpleObjectProperty with the {@link Box} inside
      */
-    public SimpleObjectProperty<Box> getSimpleBox(int line, int column){
-        return this.getBoxes().get(line).get(column);
+    public SimpleObjectProperty<Box> getBoxProperty(int line, int column){
+        for(SimpleObjectProperty<Box> boxSimpleObjectProperty : this.boxes){
+            Box box = (Box) boxSimpleObjectProperty.get();
+            if(box.getLine() == line &&  box.getColumn() == column){
+                return boxSimpleObjectProperty;
+            }
+        }
+        return null;
     }
 
     /**
@@ -139,7 +171,8 @@ public class Board {
      * @return The {@link Board} object corresponding
      */
     public Box getBox(int line, int column){
-        return this.getSimpleBox(line,column).get();
+        SimpleObjectProperty<Box> boxProperty = this.getBoxProperty(line, column);
+        return (boxProperty != null) ? boxProperty.get() : null;
     }
     /**
      * Changes the current user
@@ -152,6 +185,13 @@ public class Board {
     }
 
     /**
+     * Have the dimension of the board (X*X --> Return X)
+     * @return
+     */
+    public int dimension(){
+        return (int) Math.sqrt(this.getBoxes().size());
+    }
+    /**
      * // TODO La javadoc de generic scan
      * @param line
      * @param column
@@ -161,11 +201,11 @@ public class Board {
      */
     public Alignment genericScan(int line, int column, int dLine, int dColumn){
         Alignment alignment = new Alignment(this.winningNumber);
-        int size = this.getBoxes().size();
+        int size = this.dimension();
         for (int currentLine = line, currentColumn = column;
                 currentLine >= 0 && currentLine < size && currentColumn < size && currentColumn >= 0;
                 currentLine += dLine, currentColumn +=dColumn){
-            alignment.add(getBox(currentLine, currentColumn));
+            alignment.add(this.getBox(currentLine, currentColumn));
         }
         return alignment;
     }
@@ -213,7 +253,7 @@ public class Board {
     public ArrayList<Alignment> getAllAlignment(){
         // Creating the Output Table
         ArrayList<Alignment> allAlignment = new ArrayList<>();
-        int size = this.getBoxes().size();
+        int size = dimension();
 
         //Add line and columns
         for(int i = 0; i < size; i++) {
@@ -241,7 +281,7 @@ public class Board {
      * Getter, return all boxes {@link Board#boxes}
      * @return ArrayList of ArrayList of SimpleObjectProperty {@link Box} :)
      */
-    public ArrayList<ArrayList<SimpleObjectProperty<Box>>> getBoxes() {
+    public ArrayList<SimpleObjectProperty<Box>> getBoxes() {
         return boxes;
     }
 
@@ -278,6 +318,44 @@ public class Board {
         int currentIndexPlayer = this.getIndexPlayer(this.getCurrentPlayer());
         return this.getPlayers().get( (currentIndexPlayer > this.getPlayers().size() - 2)?0:(currentIndexPlayer+1) );
     }
+
+    /**
+     * Return the player who have won the game
+     * @return The winner {@link Player}, if you have no winner null
+     */
+    public Player whoWon(){
+        for(Alignment alignment : this.getAllAlignment()){
+            Player winner = alignment.earnedBy();
+            if(winner != null){
+                return winner;
+            }
+        }return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isWon(){
+        return  whoWon() != null;
+    }
+    /**
+     * If your player past in param have won the game
+     * @param player The verificiation
+     * @return a bool to know if your player win or not
+     */
+    public boolean isWonBy(Player player){
+        return this.whoWon() == player;
+    }
+
+    /**
+     * Determines if the game is over
+     * @return true if the game is over, else false
+     */
+    public boolean isFinished(){
+        return this.isWon() || this.getAllEmptyBox().size() == 0;
+    }
+
     /**
      * Play
      * @param line The Line
@@ -285,35 +363,20 @@ public class Board {
      * @return True if you can play on this box, else false
      */
     public boolean play(int line, int column) {
-        Box box = this.getBox(line, column);
-        if(box.haveOwner()){
-            return false;
-        }
-        box.setOwner(this.getCurrentPlayer());
-        this.currentPlayer = this.getNextPlayer();
-
-        // On donne l amain au prochain joueur
-        this.currentPlayer.play();
-
-        //Board.affiche(getDiagonalSE(1,2));
-        return true;
-    }
-    // TODO getEmptyBoxes à revoir et surtout à repenser
-    public ArrayList<ArrayList<Box>> getEmptyBoxes(){
-        ArrayList<ArrayList<Box>> emptyBoxes = new ArrayList<>();
-        for(int line = 0; line < this.getBoxes().size(); line++){
-            ArrayList<Box> lineO = new ArrayList<>();
-            emptyBoxes.add(lineO);
-            for(int column = 0; column < this.getBoxes().size(); column++){
-                Box box = this.getBox(line, column);
-                if(box.haveOwner()){
-                    lineO.add(column, null);
-                }else{
-                    lineO.add(column, box);
-                }
+        if(!this.isFinished()) {
+            Box box = this.getBox(line, column);
+            if (box.haveOwner()) {
+                return false;
             }
-        }
-        return emptyBoxes;
+            box.setOwner(this.getCurrentPlayer());
+            this.currentPlayer = this.getNextPlayer();
+
+            // On donne l amain au prochain joueur
+            this.currentPlayer.play(this);
+
+            //Board.affiche(getDiagonalSE(1,2));
+            return true;
+        }return false;
     }
     /**
      * The gridPane who represent the Board
@@ -321,5 +384,17 @@ public class Board {
      */
     public GridPane getGridPane() {
         return gridPane;
+    }
+
+
+    public ArrayList<Box> getAllEmptyBox() {
+        ArrayList<Box> emptyBox = new ArrayList<>();
+        for(SimpleObjectProperty<Box> boxSimpleObjectProperty : this.getBoxes()){
+            Box box = boxSimpleObjectProperty.get();
+            if(!box.haveOwner()){
+                emptyBox.add(box);
+            }
+        }
+        return emptyBox;
     }
 }

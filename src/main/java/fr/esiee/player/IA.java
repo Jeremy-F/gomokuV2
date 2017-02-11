@@ -13,19 +13,31 @@ import javafx.scene.paint.Color;
  * @author Alexandre Causse & Jérémy Fornarino   [E3T]
  */
 public class IA extends Player{
-
-    public IA(String name, Color color, Board board) {
-        super(name, color, board);
+    public IA(String name, Color color) {
+        super(name, color);
     }
 
+    /*public int eval(){
+        if(this.getBoard().isFinished()){
+            if(this.haveWin()){
+                return 1000;
+            }else if(this.wonByOtherPlayer()){
+                return -100;
+            }else{
+                return 0;
+            }
+        }
+        return -3;
+    }*/
+
     @Override
-    public boolean play() {
-        int randomLine   = (int)(Math.random() * this.getBoard().getBoxes().size());
-        int randomColumn = (int)(Math.random() * this.getBoard().getBoxes().size());
-        if(this.getBoard().getBox(randomLine, randomColumn).haveOwner()){
-            return play();
+    public boolean play(Board board) {
+        int randomLine   = (int)(Math.random() * board.dimension());
+        int randomColumn = (int)(Math.random() * board.dimension());
+        if(board.getBox(randomLine, randomColumn).haveOwner()){
+            return play(board);
         }else {
-            this.getBoard().play(randomLine, randomColumn);
+            board.play(randomLine, randomColumn);
         }
         return true;
     }

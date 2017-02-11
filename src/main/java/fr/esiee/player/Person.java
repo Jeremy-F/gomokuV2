@@ -14,13 +14,12 @@ import javafx.scene.paint.Color;
  */
 public class Person extends Player{
 
-    public Person(String name, Color color, Board board) {
-        super(name, color, board);
+    public Person(String name, Color color) {
+        super(name, color);
     }
 
     @Override
-    public boolean play() {
-        System.out.println("I have to play");
+    public boolean play(Board board) {
         return true;
     }
 }
