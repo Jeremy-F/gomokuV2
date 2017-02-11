@@ -4,6 +4,7 @@ import fr.esiee.player.Person;
 import fr.esiee.player.Player;
 import fr.esiee.player.SmartIAV1;
 import javafx.application.Application;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -31,6 +32,7 @@ public class Game extends Application {
 
     private ObservableList<Player> players;
     private Board board;
+    private GridPane gridPane;
 
     /**
      * Begins creating the application after initialization ({@link Game#init()})
@@ -48,7 +50,7 @@ public class Game extends Application {
 
         BorderPane borderPane = (BorderPane) loader.load();
 
-        GridPane boardGridPane = this.board.getGridPane();
+        GridPane boardGridPane = this.gridPane;
 
         borderPane.setCenter(boardGridPane);
 
@@ -69,18 +71,44 @@ public class Game extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        this.board = new Board(4, 4, this);
         Player player1 = new Person("AlexandreCausseBGDeLaNight", Color.WHITE);
         Player player2 = new SmartIAV1("IA", Color.BLACK);
+        this.board = new Board(4, 4);
         board.initializePlayer(player1, player2);
 
-        /*
-        Player player1 = new Person("AlexandreCausseBGDeLaNight", Color.WHITE, this.board);
-        Player newPlayer = player1.clone();
-        System.out.println(newPlayer);
-        newPlayer.setName("Salut");
-        System.out.println(newPlayer);
-        */
+        this.initializeGridPane();
+
+    }
+
+    private void initializeGridPane(){
+        this.gridPane = new GridPane();
+        this.gridPane.setGridLinesVisible(true);
+        for (int line = 0; line < this.board.dimension(); line++) {
+            for (int column = 0; column < this.board.dimension(); column++) {
+                final SimpleObjectProperty<Box> propertyBox = this.board.getBoxProperty(line, column);
+                propertyBox.get().ownerProperty().addListener((observable, oldValue, newValue) -> this.updateGridPane());
+            }
+        }
+        updateGridPane();
+    }
+
+    /**
+     *
+     */
+    private void updateGridPane() {
+
+        for (int line = 0; line < this.board.dimension(); line++) {
+            for (int column = 0; column < this.board.dimension(); column++) {
+
+                final Node boxNode = this.board.getBox(line, column).toNode();
+                this.gridPane.add(boxNode,column,line);
+
+                final int finalLine = line;
+                final int finalColumn = column;
+
+                boxNode.setOnMouseClicked(event -> this.board.play(finalLine, finalColumn));
+            }
+        }
     }
 
 

@@ -1,8 +1,6 @@
 package fr.esiee;
 import fr.esiee.player.Player;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 
@@ -25,10 +23,7 @@ public class Board {
 
 	private Game game;
 	private Player currentPlayer;
-	private GridPane gridPane;
 	private int winningNumber;
-
-
 
     private int numberOfMoves = 0;
     public int getNumberOfMoves() {
@@ -39,16 +34,12 @@ public class Board {
      * Constructor allowing to create a board without {@link Game}
      * @param size The size of the board size * size
      */
-    private Board(int size, int winningNumber) {
+    public Board(int size, int winningNumber) {
         this.winningNumber = winningNumber;
         this.boxes = new ArrayList<>();
         this.players = new ArrayList<>();
 
-        this.gridPane = new GridPane();
-        this.gridPane.setGridLinesVisible(true);
-
         this.initializeBoxes(size);
-        this.updateGridPane();
     }
     public Board(Board board){
         this(board.winningNumber, board.boxes, board.players);
@@ -82,30 +73,6 @@ public class Board {
     }
 
     /**
-     * Update the gridpane
-     * That's the GUI representation of the Board
-     * @return The current object
-     */
-    private Board updateGridPane() {
-
-        for (int line = 0; line < this.dimension(); line++) {
-            for (int column = 0; column < this.dimension(); column++) {
-
-
-                final Node boxNode = this.getBox(line, column).toNode();
-
-                this.gridPane.add(boxNode,column,line);
-
-                int finalLine = line;
-                int finalColumn = column;
-
-                boxNode.setOnMouseClicked(event -> this.play(finalLine, finalColumn));
-            }
-        }
-        return this;
-    }
-
-    /**
      * Constructor allowing to create a board with {@link Game}
      * @param size The size of the board size * size
      * @param game The Game
@@ -124,7 +91,6 @@ public class Board {
         for(int line = 0; line < size; line++){
             for(int column = 0; column < size; column++){
                 SimpleObjectProperty<Box>  propertyBox= new SimpleObjectProperty<>(new Box(line, column));
-                propertyBox.get().ownerProperty().addListener((observable, oldValue, newValue) -> this.updateGridPane());
                 this.boxes.add(propertyBox);
             }
         }
