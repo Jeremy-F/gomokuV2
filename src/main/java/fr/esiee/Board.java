@@ -1,7 +1,9 @@
 package fr.esiee;
 import fr.esiee.player.Player;
+import fr.esiee.player.SmartIAV1;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -15,15 +17,18 @@ import java.util.ArrayList;
  *****************************************************
  * @author Alexandre Causse & Jérémy Fornarino   [E3T]
  */
-public class Board {
+public class Board implements Cloneable{
 
 
 	private ArrayList<SimpleObjectProperty<Box>> boxes;
 	private ArrayList<Player> players;
 
-	private Game game;
 	private Player currentPlayer;
 	private int winningNumber;
+
+    public void setNumberOfMoves(int numberOfMoves) {
+        this.numberOfMoves = numberOfMoves;
+    }
 
     private int numberOfMoves = 0;
     public int getNumberOfMoves() {
@@ -62,25 +67,34 @@ public class Board {
             }
         }*/
     }
-
-    public Board clone(){
+    //TODO : JDoc + Re
+    public Board clone() {
         try {
-            return (Board) super.clone();
+            super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+            //
         }
+        Board newBoard = new Board(this.dimension(), this.winningNumber);
+        newBoard.setNumberOfMoves(this.getNumberOfMoves());
+        newBoard.players = new ArrayList<>();
+        // TODO Les players c'est de la merde
+        newBoard.players.add(this.players.get(0));
+        newBoard.players.add(this.players.get(1));
+        //
+        newBoard.setCurrentPlayer(this.getCurrentPlayer());
+
+        newBoard.boxes = new ArrayList<>();
+        for (SimpleObjectProperty<Box> boxProperty : this.getBoxes()) {
+            Box box = boxProperty.get();
+            Box nb = new Box(box.getLine(), box.getColumn());
+            nb.setOwner(box.getOwner());
+            newBoard.boxes.add(new SimpleObjectProperty<Box>(nb));
+        }
+        return newBoard;
+
     }
 
-    /**
-     * Constructor allowing to create a board with {@link Game}
-     * @param size The size of the board size * size
-     * @param game The Game
-     */
-    public Board(int size, int winningNumber, Game game) {
-        this(size, winningNumber);
-        this.game = game;
-    }
+
 
     /**
      * Created all the boxes, and initializes them.
@@ -356,15 +370,17 @@ public class Board {
             }
             box.setOwner(this.getCurrentPlayer());
             //To memorize the numberOfMoves
-            numberOfMoves +=1;
+            numberOfMoves += 1;
             //todo : remove
             System.out.println("State of  :" + this.currentPlayer + " : "  +this.getCurrentPlayer().evaluate(this));
             System.out.println("Number of moves :" + getNumberOfMoves());
             this.currentPlayer = this.getNextPlayer();
 
-            // On donne la main au prochain joueur
-            this.currentPlayer.play(this);
 
+            if(!this.isFinished()) {
+                // On donne la main au prochain joueur
+                this.currentPlayer.play(this);
+            }
             //Board.affiche(getDiagonalSE(1,2));
             return true;
         }
@@ -402,13 +418,6 @@ public class Board {
     }
 
 
-    /**
-     * The gridPane who represent the Board
-     * @return a GridPane representing the board
-     */
-    public GridPane getGridPane() {
-        return gridPane;
-    }
 
 
     public ArrayList<Box> getAllEmptyBox() {
@@ -420,5 +429,30 @@ public class Board {
             }
         }
         return emptyBox;
+    }
+
+    public void setOtherPlayer(Player otherPlayer) {
+        final int indexPlayer = this.getIndexPlayer(this.getNextPlayer());
+        this.getPlayers().set(indexPlayer, otherPlayer);
+
+    }
+
+
+    public int getnumberOfAlignementsOf(Player player, int size) {
+        int total = 0;
+        ArrayList<Alignment> allAlignement = this.getAllAlignment();
+        for(Alignment alignment : allAlignement){
+            if(alignment.size() >= size){
+                total += alignment.countNbrOfBoxAligneBy(player, size);
+            }
+        }
+        return total;
+    }
+
+    public Player getOtherPlayer(Player player) {
+        if (currentPlayer.equals(player))
+            return getNextPlayer();
+        else
+            return currentPlayer;
     }
 }

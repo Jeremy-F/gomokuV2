@@ -106,6 +106,9 @@ public class Alignment {
                         return owner;
                 }
                 lastPlayer = owner;
+            }else{
+                currentPlayerBoxNumber = 1;
+                lastPlayer = null;
             }
         }
         return null;
@@ -143,5 +146,38 @@ public class Alignment {
                 "boxes=" + boxes.toString() +
                 ", winningNumber=" + winningNumber +
                 '}';
+    }
+    public int countNbrOfBoxAligneBy(Player player, int nbr){
+        int total = 0;
+        for(int i = 0; i < this.size() - nbr; i++){
+            total++;
+            for(int j = 0; j < nbr; j++){
+                final Box box = this.getBox(j+i);
+                if(!player.equals(box.getOwner())){
+                    total--;
+                    break;
+                }
+            }
+        }
+        return total;
+    }
+    public boolean myPlayerHaveXBoxAligned(Player player, int size) {
+        int currentPlayerBoxNumber = 0;
+        for(int i = 0; i < this.size(); i++){
+            final Box box = this.getBox(i);
+            if(box.hasOwner()) {
+                Player owner = box.getOwner();
+                if (!owner.equals(player)) {
+                    currentPlayerBoxNumber = 0;
+                }else {
+                    currentPlayerBoxNumber++;
+                    if(currentPlayerBoxNumber >= size)
+                        return true;
+                }
+            }else{
+                currentPlayerBoxNumber = 0;
+            }
+        }
+        return false;
     }
 }

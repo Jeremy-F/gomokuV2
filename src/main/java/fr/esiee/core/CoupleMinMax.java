@@ -7,6 +7,14 @@ package fr.esiee.core;
 public class CoupleMinMax {
     private int min;
 
+    @Override
+    public String toString() {
+        return "CoupleMinMax{" +
+                "min=" + min +
+                ", max=" + max +
+                '}';
+    }
+
     public void setMin(int min) {
         this.min = min;
     }

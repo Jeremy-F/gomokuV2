@@ -72,7 +72,8 @@ public class Game extends Application {
     public void init() throws Exception {
         super.init();
         Player player1 = new Person("AlexandreCausseBGDeLaNight", Color.WHITE);
-        Player player2 = new SmartIAV1("IA", Color.BLACK);
+        //Player player2 = new IA("IA", Color.BLACK);
+        Player player2 = new SmartIAV1("SmartIAV1", Color.BLACK);
         this.board = new Board(4, 4);
         board.initializePlayer(player1, player2);
 

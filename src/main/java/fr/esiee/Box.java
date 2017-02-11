@@ -15,12 +15,23 @@ import javafx.scene.shape.Circle;
  *****************************************************
  * @author Alexandre Causse & Jérémy Fornarino   [E3T]
  */
-public class Box {
+public class Box implements Cloneable{
+
+
 
 	private SimpleObjectProperty<Player> owner;
 	private int line;
 	private int column;
 
+
+    public Box clone(){
+        try {
+            return (Box) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 	public Box() {
 	    this(new SimpleObjectProperty<Player>(), 0, 0);
@@ -90,12 +101,12 @@ public class Box {
         return owner;
     }
 
-
-
     @Override
     public String toString() {
         return "Box{" +
-                "owner=" + getOwner() +
+                "owner=" + owner +
+                ", line=" + line +
+                ", column=" + column +
                 '}';
     }
 
