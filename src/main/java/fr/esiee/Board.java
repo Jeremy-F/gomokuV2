@@ -293,6 +293,18 @@ public class Board {
     }
 
     /**
+     *
+     */
+    public ArrayList<SimpleObjectProperty<Box>> getFreeBoxes() {
+        ArrayList<SimpleObjectProperty<Box>> boxList = new ArrayList<>();
+        for (SimpleObjectProperty<Box> box : boxes) {
+            if (! box.get().hasOwner())
+                boxList.add(box);
+        }
+        return boxList;
+    }
+
+    /**
      * Getter, return all the {@link }
      * @return All a list of all the {@link Player}
      */
@@ -392,6 +404,38 @@ public class Board {
         }
         return false;
     }
+
+    /**
+     * Play
+     * @param line The Line
+     * @param column The column
+     * @return True if you can play on this box, else false
+     */
+    public boolean simulate(int line, int column) throws Exception {
+        if(!this.isFinished()) {
+            Box box = this.getBox(line, column);
+            if (box.hasOwner()) {
+                throw new Exception("Unexpect call to simulate in board");
+                //return false;
+            }
+            box.setOwner(this.getCurrentPlayer());
+            //To memorize the numberOfMoves
+            numberOfMoves +=1;
+            //todo : remove
+            System.out.println("State of  :" + this.currentPlayer + " : "  +this.getCurrentPlayer().evaluate(this));
+            System.out.println("Number of moves :" + getNumberOfMoves());
+            this.currentPlayer = this.getNextPlayer();
+
+            // On donne la main au prochain joueur
+            this.currentPlayer.playSmart0(this);
+
+            //Board.affiche(getDiagonalSE(1,2));
+            return true;
+        }
+        return false;
+    }
+
+
     /**
      * The gridPane who represent the Board
      * @return a GridPane representing the board

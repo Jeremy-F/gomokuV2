@@ -2,6 +2,7 @@ package fr.esiee;
 import fr.esiee.player.IA;
 import fr.esiee.player.Person;
 import fr.esiee.player.Player;
+import fr.esiee.player.SmartIAV1;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -70,7 +71,7 @@ public class Game extends Application {
         super.init();
         this.board = new Board(4, 4, this);
         Player player1 = new Person("AlexandreCausseBGDeLaNight", Color.WHITE);
-        Player player2 = new IA("IA", Color.BLACK);
+        Player player2 = new SmartIAV1("IA", Color.BLACK);
         board.initializePlayer(player1, player2);
 
         /*
