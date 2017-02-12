@@ -2,6 +2,7 @@ package fr.esiee.player;
 import fr.esiee.Board;
 import fr.esiee.Box;
 import fr.esiee.core.CoupleMinMax;
+import fr.esiee.strategy.Strategy;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 
@@ -38,7 +39,10 @@ public class IA extends Player{
 
     @Override
     public boolean play(Board board) {
-        //It should not play if the game is up
+
+        return Strategy.playRandom(board, this);
+
+/*        //It should not play if the game is up
         if (board.isFinished()) {
             //todo : remove
             System.out.println("game is over ! ");
@@ -52,7 +56,7 @@ public class IA extends Player{
         }else {
             board.play(randomLine, randomColumn);
         }
-        return true;
+        return true;*/
     }
 
 

@@ -9,6 +9,8 @@ import fr.esiee.player.Player;
  */
 public class Strategy {
 
+
+
     public static boolean playRandom(Board board, Player player) {
         int randomLine = (int) (Math.random() * board.dimension());
         int randomColumn = (int) (Math.random() * board.dimension());

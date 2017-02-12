@@ -75,7 +75,9 @@ public class Board implements Cloneable{
         } catch (CloneNotSupportedException e) {
             //
         }
+
         Board newBoard = new Board(this.dimension(), this.winningNumber);
+
 
         //todo : Trying to calcule moves from now
         //newBoard.setNumberOfMoves(0);

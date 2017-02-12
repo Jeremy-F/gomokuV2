@@ -71,7 +71,9 @@ public class Game extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        Player player1 = new Person("AlexandreCausseBGDeLaNight", Color.WHITE);
+        //Player player1 = new Person("AlexandreCausseBGDeLaNight", Color.WHITE);
+        //Player player1 = new SmartIAV1("SmartIAV0", Color.WHITE);
+        Player player1 = new IA("DummyV0", Color.WHITE);
         //Player player2 = new IA("IA", Color.BLACK);
         Player player2 = new SmartIAV1("SmartIAV1", Color.BLACK);
         this.board = new Board(4, 4);

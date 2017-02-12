@@ -27,6 +27,9 @@ public abstract class Player {
 	private static int AVERAGE_POINT = 0;
     private static int DEPTH = 3;
 
+    //To be removed
+    private static int callNumber = 0;
+
 	public Player(String name, Color color) {
 		this.name = name;
 		this.color = color;
@@ -109,7 +112,7 @@ public abstract class Player {
         Box bestMove = null;
         try {
 
-            bestMove = getBestMove(newBoard);
+            bestMove = getBestMove(newBoard,DEPTH);
             // useless ?
             board.setCurrentPlayer(this);
             board.play(bestMove.getLine(), bestMove.getColumn());
@@ -121,7 +124,8 @@ public abstract class Player {
         return true;
     }
 
-    private Box getBestMove(Board simulationBoard) throws Exception {
+    private Box getBestMove(Board simulationBoard, int depth) throws Exception {
+
 
         int maxValue = Integer.MIN_VALUE;
 
@@ -130,17 +134,26 @@ public abstract class Player {
         for (Box b : copYfreeBoxes)
             freeBoxes.add(new Box(b.getLine(),b.getColumn()));
 
+
         //useless?
         Box bestMove = freeBoxes.get(0);
 
+
         Board savBoard = cloneBoardForSimulation(simulationBoard);
 
+        //todo : to be removed
+        callNumber+=1;
+        int localCallNumber = callNumber;
+        int numberOfTry = savBoard.getNumberOfMoves();
+
+
+        //System.out.println( localCallNumber + "=============before try in getBestMove : " + savBoard.getNumberOfMoves());
         for (Box box : freeBoxes) {
             //We play for the current Player one move
-
+            //if (box.hasOwner())  System.out.println("===== call in getBestMove with " + box);
             simulateOneTurn(simulationBoard,box);
             //We try all the possibilities and return the min and max
-            CoupleMinMax coupleMinMax = minMax(simulationBoard, DEPTH);
+            CoupleMinMax coupleMinMax = minMax(simulationBoard, depth);
             //System.out.println("I try for me " + this + " : " + box + "and get " + coupleMinMax + simulationBoard.isWonBy(this));
 
             if (coupleMinMax.getMin() > maxValue) {
@@ -149,11 +162,13 @@ public abstract class Player {
                // System.out.println("Best choice :   " + box +" because  " + coupleMinMax );
             }
             //We cancel all moves
-            simulationBoard = savBoard;
-
+            if (savBoard.getNumberOfMoves() != numberOfTry) System.out.println("?????");
+            simulationBoard = cloneBoardForSimulation(savBoard);
+            //System.out.println(localCallNumber + "  try again for another box ?" + simulationBoard.getNumberOfMoves() + " against " + numberOfTry );
         }
 
-        //System.out.println("I Tried " + bestMove +" for " + this + "and get " + maxValue );
+        //System.out.println( localCallNumber + "=============END try in getBestMove : " + savBoard.getNumberOfMoves());
+        //System.out.println(depth  + "---- I found " + bestMove +" for " + this + "and get " + maxValue );
         return bestMove;
     }
 
@@ -182,18 +197,19 @@ public abstract class Player {
         }
     }
 
-    private void execSimulation(Board board, Box bestMove){
+    private void execSimulation(Board board, Box bestMove, int depth){
 
         Player nextPlayer = simulateOneTurn(board, bestMove);
 
-        if(board.isFinished()){
-            board.setNumberOfMoves(board.getNumberOfMoves()+1);
+        if( board.isFinished() || (depth == 0 )){
+            //board.setNumberOfMoves(board.getNumberOfMoves()+1);
             //System.out.println("JE ME STOP PARCEQUE la simulation est TERMINEe");
             return;
         }
         try {
-            Box nextPlayerBestMove = nextPlayer.getBestMove(board);
-            nextPlayer.simulate(nextPlayerBestMove, board);
+            Box nextPlayerBestMove = nextPlayer.getBestMove(board, depth);
+            if (nextPlayerBestMove.hasOwner())  System.out.println("------------- call in nextPlayerBestMove " + bestMove);
+            nextPlayer.simulate(nextPlayerBestMove, board,depth-1);
         } catch (Exception e) {
             System.out.println("Pas de best move, enfin ok");
             return;
@@ -201,21 +217,25 @@ public abstract class Player {
     }
 
     private Player simulateOneTurn(Board board, Box bestMove) {
+        //System.out.println("Simulate for " + this  + "on " + bestMove + board.getNumberOfMoves());
         board.getBox(bestMove.getLine(), bestMove.getColumn()).setOwner(this);
-
+        //System.out.println("Reste libres : " + board.getFreeBoxes().size());
         Player nextPlayer = board.getOtherPlayer(this);
         board.setCurrentPlayer(nextPlayer);
         board.setNumberOfMoves(board.getNumberOfMoves()+1);
         return nextPlayer;
     }
 
-    private void simulate(Box place, Board board) throws Exception {
-        //It should not play if the game is over
-        if (board.isFinished()) {
-            return;
-        }
-        this.execSimulation(board, place);
 
+    // false if we cannot play
+    private boolean simulate(Box place, Board board, int depth) throws Exception {
+
+        //It should not play if the game is over
+        if (board.isFinished() || (depth == 0)) {
+            return false;
+        }
+        this.execSimulation(board, place, depth);
+        return true;
     }
 
     //todo : to be removed
@@ -246,12 +266,17 @@ Precondition : The current player just plays or the game is over.
         coupleMinMax.setMax(Integer.MIN_VALUE);
 
         //for all free boxes (potential moves)
-        ArrayList<Box> freeBoxes = simulationBoard.getAllEmptyBox();
+        ArrayList<Box> copYfreeBoxes = simulationBoard.getAllEmptyBox();
+        ArrayList<Box>freeBoxes = new ArrayList<>();
+        for (Box b : copYfreeBoxes)
+            freeBoxes.add(new Box(b.getLine(),b.getColumn()));
+
         Board savBoard = cloneBoardForSimulation(simulationBoard);
         //We only play for the other player.
         Player nextPlayer = simulationBoard.getOtherPlayer(this);
         for (Box box : freeBoxes){
-            nextPlayer.simulate(box,simulationBoard );
+               nextPlayer.simulate(box,simulationBoard, depth-1);
+
             //nextPlayer.simulateOneTurn(simulationBoard,box);
             //The game should be over but minMax should be on the current player
             CoupleMinMax newCoupleMinMax = minMax(simulationBoard,depth-1);
@@ -259,7 +284,7 @@ Precondition : The current player just plays or the game is over.
                 coupleMinMax.setMax(newCoupleMinMax.getMin());
             if (newCoupleMinMax.getMax() < coupleMinMax.getMin())
                 coupleMinMax.setMin(newCoupleMinMax.getMax());
-            simulationBoard = savBoard;
+            simulationBoard = cloneBoardForSimulation(savBoard);
         }
         return coupleMinMax;
 
