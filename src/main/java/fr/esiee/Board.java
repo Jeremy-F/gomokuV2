@@ -26,13 +26,14 @@ public class Board implements Cloneable{
 	private Player currentPlayer;
 	private int winningNumber;
 
-    public void setNumberOfMoves(int numberOfMoves) {
-        this.numberOfMoves = numberOfMoves;
-    }
+
 
     private int numberOfMoves = 0;
     public int getNumberOfMoves() {
         return numberOfMoves;
+    }
+    public void setNumberOfMoves(int numberOfMoves) {
+        this.numberOfMoves = numberOfMoves;
     }
 
     /**
@@ -75,6 +76,9 @@ public class Board implements Cloneable{
             //
         }
         Board newBoard = new Board(this.dimension(), this.winningNumber);
+
+        //todo : Trying to calcule moves from now
+        //newBoard.setNumberOfMoves(0);
         newBoard.setNumberOfMoves(this.getNumberOfMoves());
         newBoard.players = new ArrayList<>();
         // TODO Les players c'est de la merde
@@ -326,9 +330,12 @@ public class Board implements Cloneable{
         for(Alignment alignment : this.getAllAlignment()){
             Player winner = alignment.earnedBy();
             if(winner != null){
+                //System.out.println("Winner is : " + winner + " on " + alignment);
                 return winner;
             }
-        }return null;
+        }
+
+        return null;
     }
 
     /**
@@ -371,9 +378,8 @@ public class Board implements Cloneable{
             box.setOwner(this.getCurrentPlayer());
             //To memorize the numberOfMoves
             numberOfMoves += 1;
-            //todo : remove
-            System.out.println("State of  :" + this.currentPlayer + " : "  +this.getCurrentPlayer().evaluate(this));
-            System.out.println("Number of moves :" + getNumberOfMoves());
+            //System.out.println("State of  :" + this.currentPlayer + " : "  +this.getCurrentPlayer().evaluate(this));
+            //System.out.println("Number of moves :" + getNumberOfMoves());
             this.currentPlayer = this.getNextPlayer();
 
 
@@ -387,12 +393,8 @@ public class Board implements Cloneable{
         return false;
     }
 
-    /**
-     * Play
-     * @param line The Line
-     * @param column The column
-     * @return True if you can play on this box, else false
-     */
+
+/*
     public boolean simulate(int line, int column) throws Exception {
         if(!this.isFinished()) {
             Box box = this.getBox(line, column);
@@ -415,7 +417,7 @@ public class Board implements Cloneable{
             return true;
         }
         return false;
-    }
+    }*/
 
 
 
@@ -440,8 +442,8 @@ public class Board implements Cloneable{
 
     public int getnumberOfAlignementsOf(Player player, int size) {
         int total = 0;
-        ArrayList<Alignment> allAlignement = this.getAllAlignment();
-        for(Alignment alignment : allAlignement){
+        ArrayList<Alignment> allAlignements = this.getAllAlignment();
+        for(Alignment alignment : allAlignements){
             if(alignment.size() >= size){
                 total += alignment.countNbrOfBoxAligneBy(player, size);
             }

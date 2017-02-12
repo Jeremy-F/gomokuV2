@@ -77,7 +77,14 @@ public class Alignment {
         }
         return this;
     }
+
+    public Alignment remove(Box box){
+        this.boxes.remove(box);
+        return this;
+    }
+
     /**
+     *
      * To know if a player "have win" an alignment
      * @param player The player
      * @return TRUE if the player (param) have win, else false
@@ -147,9 +154,12 @@ public class Alignment {
                 ", winningNumber=" + winningNumber +
                 '}';
     }
+
+
     public int countNbrOfBoxAligneBy(Player player, int nbr){
+        if (nbr==0) return 0;
         int total = 0;
-        for(int i = 0; i < this.size() - nbr; i++){
+        for(int i = 0; i <= this.size() - nbr; i++){
             total++;
             for(int j = 0; j < nbr; j++){
                 final Box box = this.getBox(j+i);
@@ -161,7 +171,7 @@ public class Alignment {
         }
         return total;
     }
-    public boolean myPlayerHaveXBoxAligned(Player player, int size) {
+    public boolean myPlayerHasXAlignedBoxes(Player player, int size) {
         int currentPlayerBoxNumber = 0;
         for(int i = 0; i < this.size(); i++){
             final Box box = this.getBox(i);
