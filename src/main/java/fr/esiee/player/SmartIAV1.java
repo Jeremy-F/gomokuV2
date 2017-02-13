@@ -4,8 +4,15 @@ import fr.esiee.Board;
 import javafx.scene.paint.Color;
 
 /**
- * Created by blay on 11/02/2017.
- * Modified by blay on 11/02/2017.
+ *****************************************************
+ * ,----.     E3T - Esiee Paris      ,--.            *
+ * '  .-./    ,---. ,--,--,--. ,---. |  |,-.,--.,--. *
+ * |  | .---.| .-. ||        || .-. ||     /|  ||  | *
+ * '  '--'  |' '-' '|  |  |  |' '-' '|  \  \'  ''  ' *
+ * `------'  `---' `--`--`--' `---' `--'`--'`------' *
+ *    Alexandre Causse            Jérémy Fornarino   *
+ *****************************************************
+ * @author Alexandre Causse & Jérémy Fornarino   [E3T]
  */
 public class SmartIAV1 extends IA {
 

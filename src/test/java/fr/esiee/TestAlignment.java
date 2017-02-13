@@ -8,7 +8,17 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
-
+/**
+ *****************************************************
+ * ,----.     E3T - Esiee Paris      ,--.            *
+ * '  .-./    ,---. ,--,--,--. ,---. |  |,-.,--.,--. *
+ * |  | .---.| .-. ||        || .-. ||     /|  ||  | *
+ * '  '--'  |' '-' '|  |  |  |' '-' '|  \  \'  ''  ' *
+ * `------'  `---' `--`--`--' `---' `--'`--'`------' *
+ *    Alexandre Causse            Jérémy Fornarino   *
+ *****************************************************
+ * @author Alexandre Causse & Jérémy Fornarino   [E3T]
+ */
 public class TestAlignment {
 
     Alignment alignment;
